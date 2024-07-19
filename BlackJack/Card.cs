@@ -44,11 +44,11 @@ namespace BlackJack
         }
         public void Hide()
         {
-            if (!Hidden)
-            {
-                Hidden = true;
-                return;
-            }
+            Hidden = true;
+            return;
+        }
+        public void Unhide()
+        {
             Hidden = false;
             return;
         }
