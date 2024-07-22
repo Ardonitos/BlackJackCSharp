@@ -30,12 +30,12 @@ namespace BlackJack
                 {"Q", 10},
                 {"J", 10}
             };
+            List<char> suits = ['♥', '♠', '♦', '♣'];
 
             Random rdn = new();
             List<string> cardKeys = new(cards.Keys);
             int randIndex = rdn.Next(cardKeys.Count);
             string cardKey = cardKeys[randIndex];
-            List<char> suits = ['♥', '♠', '♦', '♣'];
             int suitsIndex = rdn.Next(suits.Count);
 
             Name = cardKey;
@@ -45,20 +45,14 @@ namespace BlackJack
         public void Hide()
         {
             Hidden = true;
-            return;
         }
         public void Unhide()
         {
             Hidden = false;
-            return;
         }
         public override string ToString()
         {
-            if (!Hidden)
-            {
-                return $"{Name}{Suits}";
-            }
-            return "*";
+            return Hidden ? "*" : $"{Name}{Suits}";
         }
     }
 }

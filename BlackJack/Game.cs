@@ -1,12 +1,30 @@
 ﻿
+using System.Text;
+
 namespace BlackJack
 {
     internal class Game
     {
         private static Actors Dealer = new();
         private static Actors Player = new();
+        private static Stats Stats = new();
 
-        public static void Run()
+        public static void LoopRun()
+        {
+            while (true)
+            {
+                Console.Clear();
+                SingleRun();
+                Console.WriteLine("Start's a new one? [Y]es [N]o ");
+                string answer = Console.ReadLine() ?? "n";
+
+                if (answer.ToLower() == "n") { break; }
+            }
+            Stats.ShowStats();
+        }
+
+
+        private static void SingleRun()
         {
             bool run = true;
             // Player's While
@@ -45,6 +63,7 @@ namespace BlackJack
             Console.Clear();
             Menu(dealer: false);
             Checker();
+            Restart();
 
         }
         private static void Menu(bool dealer)
@@ -71,24 +90,35 @@ namespace BlackJack
 
         private static void Checker()
         {
-            if (Player.Total() < 22 && Player.Total() > Dealer.Total() || Dealer.Total() > 21)
+
+            static bool CheckWinner(int firstTotal, int secondTotal)
+            {
+                bool winCondition = (firstTotal < 22 && firstTotal > secondTotal || secondTotal > 21 && firstTotal < 22);
+                Console.WriteLine($"Player: {firstTotal} Dealer: {secondTotal} WC: {winCondition}");
+                return winCondition;
+            }
+
+            if (CheckWinner(Player.Total(), Dealer.Total()))
             {
                 Console.WriteLine("Player WINS");
+                Stats.AddVictory();
             }
-            else if (Dealer.Total() < 22 && Dealer.Total() > Player.Total() || Player.Total() > 21)
+            else if (CheckWinner(Dealer.Total(), Player.Total()))
             {
                 Console.WriteLine("Dealer WINS");
+                Stats.AddDefeat();
             }
             else
             {
                 Console.WriteLine("Draw!!");
+                Stats.AddDraw();
             }
         }
         
         private static string CardDisplay(List<Card> deck, bool dealer)
         {
             int count = 0;
-            string stringDeck = "";
+            StringBuilder sb = new();
 
             foreach (Card card in deck)
             {
@@ -102,11 +132,21 @@ namespace BlackJack
                     card.Unhide();
                 }
 
-
-                stringDeck += card.ToString();
-                stringDeck += " ";
+                sb.Append(card.ToString());
+                sb.Append(' ');
             }
-            return stringDeck;
+            return sb.ToString();
+        }
+
+        private static void Restart()
+        {
+            Player.Deck.Clear();
+            Dealer.Deck.Clear();
+            for (int i = 0; i <= 1; i++)
+            {
+                Player.AddCard();
+                Dealer.AddCard();
+            }
         }
         private static void Lin(string symbol)
         {
